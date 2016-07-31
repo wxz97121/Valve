@@ -44,6 +44,8 @@ public class MainController1 : MonoBehaviour
     public GameObject myNews;
     public TextMesh Text1;
     public TextMesh Text2;
+    [SerializeField]
+    private string Good,Normal,Bad;
     //public int[] PeopleNeed;
     //public double[] P;
 
@@ -55,17 +57,37 @@ public class MainController1 : MonoBehaviour
         //播放结算动画
         yield return new WaitForSeconds(3);
         MyUI.SetActive(true);
-        
-        if (gameObject.name == "MainController (5)") { GameObject.FindGameObjectWithTag("Title").GetComponent<UILabel>().text = "Fin."; all.text = "真正而持久的胜利就是和平, 而不是战争——拉尔夫•沃尔多•埃莫森"; part.text = ""; yield return new WaitForSeconds(1000); }
+        LD.delta = 0;
+        if (gameObject.name == "MainController (5)")
+        {
+            GameObject.FindGameObjectWithTag("Title").GetComponent<UILabel>().text = "Fin.";
+            all.text = "真正而持久的胜利就是和平, 而不是战争——拉尔夫•沃尔多•埃莫森";
+            part.text = "";
+            yield return new WaitForSeconds(1000);
+        }
+        else
+        if (gameObject.name == "MainController (4)")
+        {
+            part.text = "两百余人在空袭中丧生。袭击几乎摧毁了一切。";
+        }
+        else
+        {
+            all.text = (People.Length - AliveAll).ToString() + "人因为没有获得足够的物资而死亡。";
+            if (AlivePart >= BigPart) { LD.delta += Part_1; part.text = Good; }
+            else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = Normal; }
+            else { LD.delta += Part_3; part.text = Bad; }
+        }
         //all.gameObject.GetComponent<AudioSource>().Play();
         //GameObject.FindGameObjectWithTag("Type").GetComponent<AudioSource>().Play();
-        LD.delta = 0;
-        if (AliveAll >= BigAll) { LD.delta += All_1; all.text = "区域存活情况：A"; }
-        else if (AliveAll >= SmallAll) { LD.delta += All_2; all.text = "区域存活情况：B"; }
-        else { LD.delta += All_3; all.text = "区域存活情况：C"; }
-        if (AlivePart >= BigPart) { LD.delta += Part_1; part.text = "重要产业强度：A"; }
-        else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = "重要产业强度：B"; }
-        else { LD.delta += Part_3; part.text = "重要产业强度：C"; }
+
+        /*        if (AliveAll >= BigAll) { LD.delta += All_1; all.text = "区域存活情况：A"; }
+                else if (AliveAll >= SmallAll) { LD.delta += All_2; all.text = "区域存活情况：B"; }
+                else { LD.delta += All_3; all.text = "区域存活情况：C"; }
+                if (AlivePart >= BigPart) { LD.delta += Part_1; part.text = "重要产业强度：A"; }
+                else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = "重要产业强度：B"; }
+                else { LD.delta += Part_3; part.text = "重要产业强度：C"; }
+        */
+
         NextController.SetActive(true);
         Destroy(gameObject);
     }
