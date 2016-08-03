@@ -10,17 +10,18 @@ public class Interactive : MonoBehaviour
     public int type;
     public int now;
     private float Mytime;
-    public string[] Ask0;
-    public string[] Ask1;
-    public string[] Ask2;
-    public string[] Ask0_Yes;
-    public string[] Ask1_Yes;
-    public string[] Ask2_Yes;
-    public string[] Ask0_No;
-    public string[] Ask1_No;
-    public string[] Ask2_No;
-    private int Display;
-    private int No;
+    /*    public string[] Ask0;
+        public string[] Ask1;
+        public string[] Ask2;
+        public string[] Ask0_Yes;
+        public string[] Ask1_Yes;
+        public string[] Ask2_Yes;
+        public string[] Ask0_No;
+        public string[] Ask1_No;
+        public string[] Ask2_No; */
+    string ask;
+    string yes;
+    string no;
     private Subtitles SB;
     private GameObject Left, Right;
     private AudioSource newsAU;
@@ -29,39 +30,39 @@ public class Interactive : MonoBehaviour
     private AudioSource ringAU;
     public Sprite hold;
     public Sprite unhold;
+    private int chapter;
+    private NewDialogue ND;
     public IEnumerator First()
     {
+        chapter = transform.parent.gameObject.name[7] - 48;
         newsAU = GameObject.FindGameObjectWithTag("news").GetComponent<AudioSource>();
         footstepsAU = GameObject.FindGameObjectWithTag("footstep").GetComponent<AudioSource>();
         supplyAU = GameObject.FindGameObjectWithTag("supply").GetComponent<AudioSource>();
         ringAU = GameObject.FindGameObjectWithTag("ring").GetComponent<AudioSource>();
         SB = GameObject.FindGameObjectWithTag("SB").GetComponent<Subtitles>();
+        ND = GameObject.FindGameObjectWithTag("ND").GetComponent<NewDialogue>();
         done = false;
         now = 0;
-        Display = (int)Random.Range(0,(Ask0.Length));
-        No = 0;
+        //Display = (int)Random.Range(0,(Ask0.Length));
+        //去找newDialogue获取一组
+        ND.GetDialogue(chapter, 1, 1, type, ref ask, ref yes, ref no);
         Left = GameObject.FindGameObjectWithTag("left");
         Right = GameObject.FindGameObjectWithTag("right");
         yield return new WaitForSeconds(1);
-        SB.Show(Ask0[Display]);
-        //显示气泡，Ask0[Display]
+        SB.Show(ask);
+        //显示气泡，A
     }
 
     void leave(bool flag)
     {
+        done = true;
         if (flag)
         {
-            done = true;
-            if (No == 0) SB.Show(Ask0_Yes[Display]);
-            if (No == 1) SB.Show(Ask1_Yes[Display]);
-            if (No == 2) SB.Show(Ask2_Yes[Display]);
+            SB.Show(yes);
         }
         else
         {
-            done = true;
-            if (No == 0) SB.Show(Ask0_No[Display]);
-            if (No == 1) SB.Show(Ask1_No[Display]);
-            if (No == 2) SB.Show(Ask2_No[Display]);
+            SB.Show(no);
         }
     }
     IEnumerator change()
@@ -76,7 +77,7 @@ public class Interactive : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.A))
         {
-            Left.transform.DORotate(new Vector3(0, 0,35), 0.8f);
+            Left.transform.DORotate(new Vector3(0, 0, 35), 0.8f);
             Left.transform.DOMoveX(-930, 0.8f);
             //胳膊 move rotate
             //Left.transform.DOMoveX(-450, 1);
@@ -87,19 +88,19 @@ public class Interactive : MonoBehaviour
             if (Time.time - Mytime > 0.75)
             {
                 Left.GetComponent<SpriteRenderer>().sprite = hold;
-                Left.transform.DOMoveX(-530,1.25f);
+                Left.transform.DOMoveX(-530, 1.25f);
                 StartCoroutine(change());
-                
+
                 supplyAU.Play();
                 //胳膊继续移动，给他一包粮食.
                 //改变粮食图片
                 now++;
                 if (now < need)
                 {
-
-                    Display=(int)Random.Range(0, (Ask1.Length));
-                    No = 1;
-                    SB.Show(Ask1[Display]);
+                    ND.GetDialogue(chapter, 0, 1, type, ref ask, ref yes, ref no);
+                    //Display=(int)Random.Range(0, (Ask1.Length));
+                    //获取新的真诚
+                    SB.Show(ask);
                     //展示字幕
                 }
                 else
@@ -110,14 +111,15 @@ public class Interactive : MonoBehaviour
                         float p = Random.value;
                         if (p < P)
                         {
-                            Display = (int)Random.Range(0, (Ask2.Length));
-                            No = 2;
-                            SB.Show(Ask2[Display]);
+                            ND.GetDialogue(chapter, 0, 0, type, ref ask, ref yes, ref no);
+                            //Display = (int)Random.Range(0, (Ask2.Length));
+                            //获取新的非真诚
+                            SB.Show(ask);
                             //展示字幕
                         }
                         else leave(true);
                     }
-                    
+
                 }
             }
             else
@@ -132,7 +134,7 @@ public class Interactive : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.D))
         {
-            Right.transform.DORotate(new Vector3(0,0,-35), 0.8f);
+            Right.transform.DORotate(new Vector3(0, 0, -35), 0.8f);
             Right.transform.DOMoveX(1100, 0.8f);
             //胳膊 move rotate
             Mytime = Time.time;

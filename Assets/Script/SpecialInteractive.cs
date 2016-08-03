@@ -108,7 +108,7 @@ public class SpecialInteractive : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.D))
         {
-            if (Time.time - Mytime > 1)
+            if (Time.time - Mytime > 0.7)
             {
                 ringAU.Play();
                 //按铃并回去

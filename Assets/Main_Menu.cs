@@ -12,12 +12,12 @@ public class Main_Menu : MonoBehaviour {
     public GameObject Button2;
     public GameObject Button3;
     public GameObject About_Sprite;
-    //public Texture2D Cursor_image;
+    public Texture2D Cursor_image;
     // Use this for initialization
     void Start () {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        //Cursor.SetCursor(Cursor_image, Vector2.zero, CursorMode.Auto);
+        Cursor.SetCursor(Cursor_image, Vector2.zero, CursorMode.Auto);
     }
 	
 	// Update is called once per frame

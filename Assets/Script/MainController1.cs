@@ -35,7 +35,6 @@ public class MainController1 : MonoBehaviour
     public string Calender;
     public GameObject CalenderObject;
     public UILabel CalenderUI;
-    private GameObject TitleUI;
     public GameObject NextController;
     private AudioSource newsAU;
     private AudioSource footstepsAU;
@@ -46,6 +45,10 @@ public class MainController1 : MonoBehaviour
     public TextMesh Text2;
     [SerializeField]
     private string Good,Normal,Bad;
+    [SerializeField]
+    private GameObject TitleUI;
+    [SerializeField]
+    GameObject PreUIController, NowUIController;
     //public int[] PeopleNeed;
     //public double[] P;
 
@@ -56,11 +59,11 @@ public class MainController1 : MonoBehaviour
         myblack.DOColor(Color.black, 3);
         //播放结算动画
         yield return new WaitForSeconds(3);
-        MyUI.SetActive(true);
+        
         LD.delta = 0;
         if (gameObject.name == "MainController (5)")
         {
-            GameObject.FindGameObjectWithTag("Title").GetComponent<UILabel>().text = "Fin.";
+            TitleUI.GetComponent<UILabel>().text = "Fin.";
             all.text = "真正而持久的胜利就是和平, 而不是战争——拉尔夫•沃尔多•埃莫森";
             part.text = "";
             yield return new WaitForSeconds(1000);
@@ -72,13 +75,13 @@ public class MainController1 : MonoBehaviour
         }
         else
         {
+            TitleUI.GetComponent<UILabel>().text = "区域报告";
             all.text = (People.Length - AliveAll).ToString() + "人因为没有获得足够的物资而死亡。";
             if (AlivePart >= BigPart) { LD.delta += Part_1; part.text = Good; }
             else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = Normal; }
             else { LD.delta += Part_3; part.text = Bad; }
         }
         //all.gameObject.GetComponent<AudioSource>().Play();
-        //GameObject.FindGameObjectWithTag("Type").GetComponent<AudioSource>().Play();
 
         /*        if (AliveAll >= BigAll) { LD.delta += All_1; all.text = "区域存活情况：A"; }
                 else if (AliveAll >= SmallAll) { LD.delta += All_2; all.text = "区域存活情况：B"; }
@@ -87,14 +90,16 @@ public class MainController1 : MonoBehaviour
                 else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = "重要产业强度：B"; }
                 else { LD.delta += Part_3; part.text = "重要产业强度：C"; }
         */
-
+        MyUI.SetActive(true);
+        NowUIController.SetActive(true);
+        GameObject.FindGameObjectWithTag("Type").GetComponent<AudioSource>().volume = 1;
+        GameObject.FindGameObjectWithTag("Type").GetComponent<AudioSource>().Play();
         NextController.SetActive(true);
         Destroy(gameObject);
     }
 
     public void Start()
     {
-        
         newsAU = GameObject.FindGameObjectWithTag("news").GetComponent<AudioSource>();
         footstepsAU = GameObject.FindGameObjectWithTag("footstep").GetComponent<AudioSource>();
         supplyAU = GameObject.FindGameObjectWithTag("supply").GetComponent<AudioSource>();
@@ -112,17 +117,18 @@ public class MainController1 : MonoBehaviour
     {
         gameObject.GetComponent<AudioSource>().Play();
         Flag = true;
-
         if (gameObject.name != "MainController")
         {
-            yield return new WaitForSeconds(8);
+            yield return new WaitForSeconds(16);
+            PreUIController.SetActive(false);
             MyUI.SetActive(false);
         }
         CalenderObject.SetActive(true);
         CalenderUI.gameObject.SetActive(true);
         CalenderUI.text = Calender;
+        GameObject.FindGameObjectWithTag("Type2").GetComponent<AudioSource>().volume = 1;
         GameObject.FindGameObjectWithTag("Type2").GetComponent<AudioSource>().Play();
-        yield return new WaitForSeconds(12);
+        yield return new WaitForSeconds(14);
         CalenderUI.gameObject.SetActive(false);
         myNews.SetActive(true);
         newsAU.Play();
@@ -208,6 +214,7 @@ public class MainController1 : MonoBehaviour
     {
         Text1.text = have.ToString();
         Text2.text = (Happen.Length-now).ToString();
+        //Debug.Log(Flag);
         if (Flag) return;
         if (now != 0)
         {
