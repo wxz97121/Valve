@@ -6,6 +6,7 @@ public class spriteupdate : MonoBehaviour {
     public Sprite some;
     public Sprite few;
     public Sprite zero;
+    public GameObject shadow;
     private GameObject Controller;
 
 	// Use this for initialization
@@ -20,6 +21,6 @@ public class spriteupdate : MonoBehaviour {
         else if (Controller.GetComponent<MainController1>().have >= 5) gameObject.GetComponent<SpriteRenderer>().sprite = some;
         else if (Controller.GetComponent<MainController1>().have > 0) gameObject.GetComponent<SpriteRenderer>().sprite = few;
         else gameObject.GetComponent<SpriteRenderer>().sprite = zero;
-
+        if (Controller.GetComponent<MainController1>().have == 0) shadow.SetActive(false); else shadow.SetActive(true);
     }
 }

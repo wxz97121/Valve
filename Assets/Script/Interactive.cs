@@ -32,6 +32,7 @@ public class Interactive : MonoBehaviour
     public Sprite unhold;
     private int chapter;
     private NewDialogue ND;
+    private bool ani = false;
     public IEnumerator First()
     {
         chapter = transform.parent.gameObject.name[7] - 48;
@@ -71,10 +72,12 @@ public class Interactive : MonoBehaviour
         Left.GetComponent<SpriteRenderer>().sprite = unhold;
         Left.transform.DORotate(new Vector3(0, 0, 0), 1f);
         Left.transform.DOMoveX(-730, 1f);
+        yield return new WaitForSeconds(1);
+        ani = false;
     }
     void Update()
     {
-
+        if (ani) return;
         if (Input.GetKeyDown(KeyCode.A))
         {
             Left.transform.DORotate(new Vector3(0, 0, 35), 0.8f);
@@ -87,14 +90,19 @@ public class Interactive : MonoBehaviour
         {
             if (Time.time - Mytime > 0.75)
             {
+                ani = true;
                 Left.GetComponent<SpriteRenderer>().sprite = hold;
                 Left.transform.DOMoveX(-530, 1.25f);
+                Right.transform.DORotate(new Vector3(0, 0, 0), 0.8f);
+                Right.transform.DOMoveX(681, 0.8f);
                 StartCoroutine(change());
-
+                GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().have--;
                 supplyAU.Play();
                 //胳膊继续移动，给他一包粮食.
                 //改变粮食图片
                 now++;
+                if (GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().have <= 0) leave(true);
+                else
                 if (now < need)
                 {
                     ND.GetDialogue(chapter, 0, 1, type, ref ask, ref yes, ref no);
@@ -143,8 +151,11 @@ public class Interactive : MonoBehaviour
         {
             if (Time.time - Mytime > 0.7f)
             {
+                ani = true;
                 ringAU.Play();
                 //按铃并回去
+                Left.transform.DORotate(new Vector3(0, 0, 0), 0.85f);
+                Left.transform.DOMoveX(-730, 0.85f);
                 Right.transform.DORotate(new Vector3(0, 0, 0), 0.8f);
                 Right.transform.DOMoveX(681, 0.8f);
                 leave(false);

@@ -23,6 +23,7 @@ public class SpecialInteractive : MonoBehaviour
     private AudioSource ringAU;
     public Sprite hold;
     public Sprite unhold;
+    private bool ani = false;
     public int Query(int n)
     {
         for (int i = 0; i < ID.Length; i++) if (ID[i] == n) return i;
@@ -60,11 +61,18 @@ public class SpecialInteractive : MonoBehaviour
         Left.GetComponent<SpriteRenderer>().sprite = unhold;
         Left.transform.DORotate(new Vector3(0, 0, 0), 1f);
         Left.transform.DOMoveX(-730, 1f);
+        yield return new WaitForSeconds(1);
+        ani = false;
+    }
+    IEnumerator changeRight()
+    {
+        yield return new WaitForSeconds(0.8f);
+        ani = false;
     }
 
     void Update()
     {
-
+        if (ani) return;
         if (Input.GetKeyDown(KeyCode.A))
         {
             //胳膊 move rotate
@@ -77,11 +85,16 @@ public class SpecialInteractive : MonoBehaviour
         {
             if (Time.time - Mytime > 0.7f)
             {
+                ani = true;
                 Left.GetComponent<SpriteRenderer>().sprite = hold;
                 Left.transform.DOMoveX(-530, 1.25f);
+                Right.transform.DORotate(new Vector3(0, 0, 0), 0.8f);
+                Right.transform.DOMoveX(681, 0.8f);
                 StartCoroutine(change());
                 //Left.transform.DOMoveX(-350, 0.75f);
                 supplyAU.Play();
+                GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().have--;
+                if (GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().have <= 0) leave();
                 //胳膊继续移动，给他一包粮食.
                 //改变粮食图片
                 now++;
@@ -110,10 +123,14 @@ public class SpecialInteractive : MonoBehaviour
         {
             if (Time.time - Mytime > 0.7)
             {
+                ani = true;
                 ringAU.Play();
                 //按铃并回去
                 Right.transform.DORotate(new Vector3(0, 0, 0), 0.8f);
                 Right.transform.DOMoveX(681, 0.8f);
+                Left.transform.DORotate(new Vector3(0, 0, 0), 0.85f);
+                Left.transform.DOMoveX(-730, 0.85f);
+                StartCoroutine(changeRight());
                 State = No[Query(State)];
                 SB.Show(Ask[Query(State)]);
                 if (No[Query(State)] == 0) leave();

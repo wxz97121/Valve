@@ -228,14 +228,14 @@ public class MainController1 : MonoBehaviour
                     AliveAll++;
                     if (type == myI.type) AlivePart++;
                 }
-                have -= myI.now;
+               //have -= myI.now;
                 StartCoroutine(Next());
             }
             else if (Happen[now - 1] == -100 && People[now - 1].GetComponent<SpecialInteractive>().done == true)
             {
                 SpecialInteractive myI = People[now - 1].GetComponent<SpecialInteractive>();
                 if (myI.now >= myI.need) AliveAll++;
-                have -= myI.now;
+                //have -= myI.now;
                 StartCoroutine(Next());
             }
         }

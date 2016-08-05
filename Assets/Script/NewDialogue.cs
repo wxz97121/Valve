@@ -29,6 +29,7 @@ public class NewDialogue : MonoBehaviour
             if (last[now] == 1 && LD.delta != 2) continue;
             if (last[now] == 3 && LD.delta != -5) continue;
             if (job[now]!=0 && myjob != job[now]) continue;
+            if (job[now] == 0 && GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().type == myjob) continue;
             myask = ask[now];
             myyes = yes[now];
             myno = no[now];
