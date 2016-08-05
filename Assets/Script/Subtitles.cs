@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Subtitles : MonoBehaviour
 {
 
-    private bool Closeflag = false;
+    private bool Closeflag = true;
     bool begin = false;
     public string flag;
     public Texture tex;
     public Font myFont;
+    public Text myText;
+    public GameObject UI;
     public void Close()
     {
         Closeflag = true;
@@ -18,16 +21,23 @@ public class Subtitles : MonoBehaviour
         Closeflag = false;
         begin = true;
         flag = "<color=#4E4E52>"+str+"</color>";
-        
-        
-
     }
+
     void Update()
     {
-        // if (Time.timeScale == 0) audioComponent.Pause(); else audioComponent.UnPause(); 
+        if (!Closeflag && !UI.activeSelf)
+        {
+            UI.SetActive(true);
+            myText.text = flag;
+        }
+        if (Closeflag && UI.activeSelf)
+        {
+            UI.SetActive(false);
+        }
+        if (myText.text != flag) myText.text = flag;
     }
 
-    public void OnGUI()
+/*    public void OnGUI()
     {
         GUI.skin.label.alignment = TextAnchor.MiddleCenter;
         GUI.skin.label.fontSize = 24;
@@ -45,6 +55,7 @@ public class Subtitles : MonoBehaviour
         }
         
     }
+*/
 
 
 }
