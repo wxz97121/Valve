@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TextFx;
 
 public class Subtitles : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class Subtitles : MonoBehaviour
     public string flag;
     public Texture tex;
     public Font myFont;
-    public Text myText;
+    public TextFxUGUI myText;
     public GameObject UI;
     public void Close()
     {
