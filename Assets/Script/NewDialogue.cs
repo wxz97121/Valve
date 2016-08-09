@@ -20,16 +20,19 @@ public class NewDialogue : MonoBehaviour
 
     public void GetDialogue(int mychapter,int myfirst,int myhonest,int myjob,ref string myask,ref string myyes,ref string myno)
     {
+        //Debug.Log(ch[mychapter]);
+        //Debug.Log(ch[mychapter + 1]);
+        //Debug.Log(P.Length);
         while (true)
         {
-            int value = (int)Random.Range(P[ch[mychapter]], P[ch[mychapter+1]]);
+            int value = (int)Random.Range(P[ch[mychapter]], P[ch[mychapter+1]-1]);
             int now = getnow[value];
             if (myfirst != first[now]) continue;
             if (myhonest != honest[now]) continue;
             if (last[now] == 1 && LD.delta != 2) continue;
             if (last[now] == 3 && LD.delta != -5) continue;
             if (job[now]!=0 && myjob != job[now]) continue;
-            if (job[now] == 0 && GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().type == myjob) continue;
+            if (job[now] == 0 && GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().type == myjob && mychapter!=4 && mychapter!=5) continue;
             myask = ask[now];
             myyes = yes[now];
             myno = no[now];
