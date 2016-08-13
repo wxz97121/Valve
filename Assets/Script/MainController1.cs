@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class MainController1 : MonoBehaviour
 {
@@ -49,6 +50,8 @@ public class MainController1 : MonoBehaviour
     private GameObject TitleUI;
     [SerializeField]
     GameObject PreUIController, NowUIController;
+    public AudioSource EndMusic;
+    public GameObject[] Ending;
     //public int[] PeopleNeed;
     //public double[] P;
 
@@ -63,10 +66,14 @@ public class MainController1 : MonoBehaviour
         LD.delta = 0;
         if (gameObject.name == "MainController (5)")
         {
-            TitleUI.GetComponent<UILabel>().text = "Fin.";
-            all.text = "真正而持久的胜利就是和平, 而不是战争——拉尔夫•沃尔多•埃莫森";
-            part.text = "";
-            yield return new WaitForSeconds(1000);
+            Ending[LD.Ending-1].SetActive(true);
+            GetComponent<AudioSource>().Stop();
+            myblack.DOColor(Color.white,3);
+            EndMusic.Play();
+            yield return new WaitForSeconds(60);
+            EndMusic.Stop();
+            myblack.DOColor(Color.black, 3);
+            SceneManager.LoadScene("UI");
         }
         else
         if (gameObject.name == "MainController (4)")
@@ -78,8 +85,8 @@ public class MainController1 : MonoBehaviour
             TitleUI.GetComponent<UILabel>().text = "区域报告";
             all.text = (People.Length - AliveAll).ToString() + "人因为没有获得足够的物资而死亡。";
             if (AlivePart >= BigPart) { LD.delta += Part_1; part.text = Good; }
-            else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = Normal; }
-            else { LD.delta += Part_3; part.text = Bad; }
+            else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = Normal; LD.Ending = 2; }
+            else { LD.delta += Part_3; part.text = Bad; LD.Ending = 2; }
         }
         //all.gameObject.GetComponent<AudioSource>().Play();
 
@@ -92,8 +99,8 @@ public class MainController1 : MonoBehaviour
         */
         MyUI.SetActive(true);
         NowUIController.SetActive(true);
-        GameObject.FindGameObjectWithTag("Type").GetComponent<AudioSource>().volume = 1;
-        GameObject.FindGameObjectWithTag("Type").GetComponent<AudioSource>().Play();
+        //GameObject.FindGameObjectWithTag("Type").GetComponent<AudioSource>().volume = 1;
+        //GameObject.FindGameObjectWithTag("Type").GetComponent<AudioSource>().Play();
         NextController.SetActive(true);
         Destroy(gameObject);
     }
@@ -119,7 +126,7 @@ public class MainController1 : MonoBehaviour
         Flag = true;
         if (gameObject.name != "MainController")
         {
-            yield return new WaitForSeconds(16);
+            yield return new WaitForSeconds(8);
             PreUIController.SetActive(false);
             MyUI.SetActive(false);
         }
@@ -146,12 +153,13 @@ public class MainController1 : MonoBehaviour
         //Debug.Log(now);
         if (now > 0 && (Happen[now - 1] == 0 || Happen[now - 1] == -100))
         {
-            People[now - 1].GetComponent<SpriteRenderer>().DOColor(Color.clear, 2);
+            yield return new WaitForSeconds(1.5f);
+            SB.Close();
+            People[now - 1].GetComponent<SpriteRenderer>().DOColor(Color.clear, 1.5f);
             footstepsAU.Play();
             //离开的动画
             yield return new WaitForSeconds(2);
             People[now - 1].SetActive(false);
-            SB.Close();
             //气泡消失
         }
         //Debug.Log(People.Length);

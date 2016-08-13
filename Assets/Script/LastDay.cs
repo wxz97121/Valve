@@ -4,6 +4,7 @@ using System.Collections;
 public class LastDay : MonoBehaviour {
     public int delta=0;
     public int[] Have;
+    public int Ending;
     private int num = 0;
     //特殊变化变量.
     public void Append(int n)
@@ -12,6 +13,7 @@ public class LastDay : MonoBehaviour {
     }
     void Start()
     {
+        Ending = 2;
         Have = new int[100];
         num = 0;
     }

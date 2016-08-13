@@ -33,8 +33,31 @@ public class Interactive : MonoBehaviour
     private int chapter;
     private NewDialogue ND;
     private bool ani = false;
+    private RandomSprite RS;
     public IEnumerator First()
     {
+        RS = GameObject.FindGameObjectWithTag("RD").GetComponent<RandomSprite>();
+        if (type==1)
+        {
+            int sprnum=Random.Range(0,RS.Farmer.Length);
+            GetComponent<SpriteRenderer>().sprite = RS.Farmer[sprnum];
+        }
+        if (type == 2)
+        {
+            int sprnum = Random.Range(0, RS.Weaver.Length);
+            GetComponent<SpriteRenderer>().sprite = RS.Weaver[sprnum];
+        }
+        if (type == 3)
+        {
+            int sprnum = Random.Range(0, RS.Worker.Length);
+            GetComponent<SpriteRenderer>().sprite = RS.Worker[sprnum];
+        }
+        if (type == 4)
+        {
+            int sprnum = Random.Range(0, RS.Livestock.Length);
+            GetComponent<SpriteRenderer>().sprite = RS.Livestock[sprnum];
+        }
+        ani = true;
         chapter = transform.parent.gameObject.name[7] - 48;
         newsAU = GameObject.FindGameObjectWithTag("news").GetComponent<AudioSource>();
         footstepsAU = GameObject.FindGameObjectWithTag("footstep").GetComponent<AudioSource>();
@@ -51,6 +74,7 @@ public class Interactive : MonoBehaviour
         Right = GameObject.FindGameObjectWithTag("right");
         yield return new WaitForSeconds(1);
         SB.Show(ask);
+        ani = false;
         //显示气泡，A
     }
 
@@ -77,7 +101,7 @@ public class Interactive : MonoBehaviour
     }
     void Update()
     {
-        if (ani) return;
+        if (ani || SB.doing) return;
         if (Input.GetKeyDown(KeyCode.A))
         {
             Left.transform.DORotate(new Vector3(0, 0, 35), 0.8f);
@@ -90,6 +114,7 @@ public class Interactive : MonoBehaviour
         {
             if (Time.time - Mytime > 0.75)
             {
+                Mytime = 100000;
                 ani = true;
                 Left.GetComponent<SpriteRenderer>().sprite = hold;
                 Left.transform.DOMoveX(-530, 1.25f);
@@ -151,6 +176,7 @@ public class Interactive : MonoBehaviour
         {
             if (Time.time - Mytime > 0.7f)
             {
+                Mytime = 100000;
                 ani = true;
                 ringAU.Play();
                 //按铃并回去

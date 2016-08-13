@@ -9,11 +9,14 @@ public class SpecialInteractive : MonoBehaviour
     public int now;
     private float Mytime;
 
-    public string[] Ask;
-    public int[] Yes;
-    public int[] No;
+    /*  
+        public string[] Ask;
+        public int[] Yes;
+        public int[] No;
+        public int[] ID;
+    */
+    public SpecialDialogue myDia;
     public int State;
-    public int[] ID;
     private LastDay LD;
     private Subtitles SB;
     private GameObject Left, Right;
@@ -23,14 +26,18 @@ public class SpecialInteractive : MonoBehaviour
     private AudioSource ringAU;
     public Sprite hold;
     public Sprite unhold;
+    public Sprite[] Emo;
     private bool ani = false;
     public int Query(int n)
     {
-        for (int i = 0; i < ID.Length; i++) if (ID[i] == n) return i;
+        for (int i = 0; i < myDia.ID.Length; i++)
+            if (myDia.ID[i] == n) return i;
         return 1000;
     }
     public IEnumerator First()
     {
+        ani = true;
+        myDia = GameObject.FindGameObjectWithTag("NSD").GetComponent<SpecialDialogue>();
         LD = GameObject.FindGameObjectWithTag("LD").GetComponent<LastDay>();
         newsAU = GameObject.FindGameObjectWithTag("news").GetComponent<AudioSource>();
         footstepsAU = GameObject.FindGameObjectWithTag("footstep").GetComponent<AudioSource>();
@@ -46,7 +53,9 @@ public class SpecialInteractive : MonoBehaviour
         Left = GameObject.FindGameObjectWithTag("left");
         Right = GameObject.FindGameObjectWithTag("right");
         yield return new WaitForSeconds(1);
-        SB.Show(Ask[Query(State)]);
+        SB.Show(myDia.Ask[Query(State)]);
+        ani = false;
+        //GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
         //显示气泡，Ask0[Display]
     }
 
@@ -72,7 +81,7 @@ public class SpecialInteractive : MonoBehaviour
 
     void Update()
     {
-        if (ani) return;
+        if (ani || SB.doing) return;
         if (Input.GetKeyDown(KeyCode.A))
         {
             //胳膊 move rotate
@@ -98,9 +107,11 @@ public class SpecialInteractive : MonoBehaviour
                 //胳膊继续移动，给他一包粮食.
                 //改变粮食图片
                 now++;
-                State = Yes[Query(State)];
-                SB.Show(Ask[Query(State)]);
-                if (Yes[Query(State)] == 0) leave();
+                Mytime = 100000;
+                State = myDia.Yes[Query(State)];
+                SB.Show(myDia.Ask[Query(State)]);
+                //GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
+                if (myDia.Yes[Query(State)] == 0) leave();
             }
             else
             {
@@ -131,9 +142,11 @@ public class SpecialInteractive : MonoBehaviour
                 Left.transform.DORotate(new Vector3(0, 0, 0), 0.85f);
                 Left.transform.DOMoveX(-730, 0.85f);
                 StartCoroutine(changeRight());
-                State = No[Query(State)];
-                SB.Show(Ask[Query(State)]);
-                if (No[Query(State)] == 0) leave();
+                State = myDia.No[Query(State)];
+                SB.Show(myDia.Ask[Query(State)]);
+                //GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
+                Mytime = 100000;
+                if (myDia.No[Query(State)] == 0) leave();
             }
             else
             {
