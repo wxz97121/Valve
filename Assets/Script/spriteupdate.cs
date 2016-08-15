@@ -17,8 +17,8 @@ public class spriteupdate : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Controller = GameObject.FindGameObjectWithTag("GameController");
-        if (Controller.GetComponent<MainController1>().have >= 15) gameObject.GetComponent<SpriteRenderer>().sprite = many;
-        else if (Controller.GetComponent<MainController1>().have >= 5) gameObject.GetComponent<SpriteRenderer>().sprite = some;
+        if (Controller.GetComponent<MainController1>().have >= 12) gameObject.GetComponent<SpriteRenderer>().sprite = many;
+        else if (Controller.GetComponent<MainController1>().have >= 6) gameObject.GetComponent<SpriteRenderer>().sprite = some;
         else if (Controller.GetComponent<MainController1>().have > 0) gameObject.GetComponent<SpriteRenderer>().sprite = few;
         else gameObject.GetComponent<SpriteRenderer>().sprite = zero;
         if (Controller.GetComponent<MainController1>().have == 0) shadow.SetActive(false); else shadow.SetActive(true);

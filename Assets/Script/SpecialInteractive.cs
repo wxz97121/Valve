@@ -27,6 +27,8 @@ public class SpecialInteractive : MonoBehaviour
     public Sprite hold;
     public Sprite unhold;
     public Sprite[] Emo;
+    private SpriteRenderer myTag;
+    public Sprite Tag;
     private bool ani = false;
     public int Query(int n)
     {
@@ -37,6 +39,7 @@ public class SpecialInteractive : MonoBehaviour
     public IEnumerator First()
     {
         ani = true;
+        myTag = GameObject.FindGameObjectWithTag("Tag").GetComponent<SpriteRenderer>();
         myDia = GameObject.FindGameObjectWithTag("NSD").GetComponent<SpecialDialogue>();
         LD = GameObject.FindGameObjectWithTag("LD").GetComponent<LastDay>();
         newsAU = GameObject.FindGameObjectWithTag("news").GetComponent<AudioSource>();
@@ -52,10 +55,14 @@ public class SpecialInteractive : MonoBehaviour
         if (State == 3) if (LD.Query(50002)) State = 50004; else State = 50007;
         Left = GameObject.FindGameObjectWithTag("left");
         Right = GameObject.FindGameObjectWithTag("right");
+        myTag.sprite = Tag;
+        myTag.DOColor(Color.white, 1);
         yield return new WaitForSeconds(1);
         SB.Show(myDia.Ask[Query(State)]);
+        yield return new WaitForSeconds(2);
+        myTag.DOColor(Color.clear, 1);
         ani = false;
-        //GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
+        GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
         //显示气泡，Ask0[Display]
     }
 
@@ -110,7 +117,7 @@ public class SpecialInteractive : MonoBehaviour
                 Mytime = 100000;
                 State = myDia.Yes[Query(State)];
                 SB.Show(myDia.Ask[Query(State)]);
-                //GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
+                GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
                 if (myDia.Yes[Query(State)] == 0) leave();
             }
             else
@@ -144,7 +151,7 @@ public class SpecialInteractive : MonoBehaviour
                 StartCoroutine(changeRight());
                 State = myDia.No[Query(State)];
                 SB.Show(myDia.Ask[Query(State)]);
-                //GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
+                GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
                 Mytime = 100000;
                 if (myDia.No[Query(State)] == 0) leave();
             }

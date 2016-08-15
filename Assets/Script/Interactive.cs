@@ -34,6 +34,8 @@ public class Interactive : MonoBehaviour
     private NewDialogue ND;
     private bool ani = false;
     private RandomSprite RS;
+    private SpriteRenderer myTag;
+    public Sprite Tag;
     public IEnumerator First()
     {
         RS = GameObject.FindGameObjectWithTag("RD").GetComponent<RandomSprite>();
@@ -58,6 +60,7 @@ public class Interactive : MonoBehaviour
             GetComponent<SpriteRenderer>().sprite = RS.Livestock[sprnum];
         }
         ani = true;
+        myTag = GameObject.FindGameObjectWithTag("Tag").GetComponent<SpriteRenderer>();
         chapter = transform.parent.gameObject.name[7] - 48;
         newsAU = GameObject.FindGameObjectWithTag("news").GetComponent<AudioSource>();
         footstepsAU = GameObject.FindGameObjectWithTag("footstep").GetComponent<AudioSource>();
@@ -72,9 +75,13 @@ public class Interactive : MonoBehaviour
         ND.GetDialogue(chapter, 1, 1, type, ref ask, ref yes, ref no);
         Left = GameObject.FindGameObjectWithTag("left");
         Right = GameObject.FindGameObjectWithTag("right");
+        myTag.sprite = Tag;
+        myTag.DOColor(Color.white, 1);
         yield return new WaitForSeconds(1);
         SB.Show(ask);
         ani = false;
+        yield return new WaitForSeconds(2);
+        myTag.DOColor(Color.clear, 1);
         //显示气泡，A
     }
 
@@ -101,7 +108,11 @@ public class Interactive : MonoBehaviour
     }
     void Update()
     {
-        if (ani || SB.doing) return;
+        if (ani || SB.doing)
+        {
+            Mytime = 1000 ;
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.A))
         {
             Left.transform.DORotate(new Vector3(0, 0, 35), 0.8f);

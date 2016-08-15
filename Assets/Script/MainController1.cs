@@ -2,6 +2,7 @@
 using System.Collections;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainController1 : MonoBehaviour
 {
@@ -41,6 +42,7 @@ public class MainController1 : MonoBehaviour
     private AudioSource footstepsAU;
     private AudioSource supplyAU;
     private AudioSource ringAU;
+    public AudioSource Boom;
     public GameObject myNews;
     public TextMesh Text1;
     public TextMesh Text2;
@@ -52,12 +54,15 @@ public class MainController1 : MonoBehaviour
     GameObject PreUIController, NowUIController;
     public AudioSource EndMusic;
     public GameObject[] Ending;
+    public Text FiveYears;
+    public UILabel Space;
+    public GameObject Guide;
     //public int[] PeopleNeed;
     //public double[] P;
 
     IEnumerator EndOfDay()
     {
-
+        if (gameObject.name == "MainController (4)") Boom.Play();
         gameObject.GetComponent<AudioSource>().DOFade(0, 3);
         myblack.DOColor(Color.black, 3);
         //播放结算动画
@@ -66,18 +71,25 @@ public class MainController1 : MonoBehaviour
         LD.delta = 0;
         if (gameObject.name == "MainController (5)")
         {
-            Ending[LD.Ending-1].SetActive(true);
-            GetComponent<AudioSource>().Stop();
-            myblack.DOColor(Color.white,3);
             EndMusic.Play();
-            yield return new WaitForSeconds(60);
-            EndMusic.Stop();
+            FiveYears.gameObject.SetActive(true);
+            FiveYears.DOColor(Color.white, 3);
+            yield return new WaitForSeconds(3);
+            GetComponent<AudioSource>().Stop();
+            myblack.DOColor(Color.white,5);
+            FiveYears.DOColor(Color.clear, 3);
+            yield return new WaitForSeconds(5);
+            Ending[LD.Ending - 1].SetActive(true);
+            yield return new WaitForSeconds(30);
+            EndMusic.DOFade(0, 5);
             myblack.DOColor(Color.black, 3);
+            yield return new WaitForSeconds(5);
             SceneManager.LoadScene("UI");
         }
         else
         if (gameObject.name == "MainController (4)")
         {
+            TitleUI.GetComponent<UILabel>().text = "区域报告";
             part.text = "两百余人在空袭中丧生。袭击几乎摧毁了一切。";
         }
         else
@@ -85,8 +97,8 @@ public class MainController1 : MonoBehaviour
             TitleUI.GetComponent<UILabel>().text = "区域报告";
             all.text = (People.Length - AliveAll).ToString() + "人因为没有获得足够的物资而死亡。";
             if (AlivePart >= BigPart) { LD.delta += Part_1; part.text = Good; }
-            else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = Normal; LD.Ending = 2; }
-            else { LD.delta += Part_3; part.text = Bad; LD.Ending = 2; }
+            else if (AlivePart >= SmallPart) { LD.delta += Part_2; part.text = Normal; LD.Ending = 1; }
+            else { LD.delta += Part_3; part.text = Bad; LD.Ending = 1; }
         }
         //all.gameObject.GetComponent<AudioSource>().Play();
 
@@ -126,7 +138,11 @@ public class MainController1 : MonoBehaviour
         Flag = true;
         if (gameObject.name != "MainController")
         {
-            yield return new WaitForSeconds(8);
+            yield return new WaitForSeconds(5);
+            Space.color = Color.white;
+            while (!Input.GetKeyDown(KeyCode.Space))
+                yield return null;
+            Space.color = Color.black;
             PreUIController.SetActive(false);
             MyUI.SetActive(false);
         }
@@ -135,16 +151,24 @@ public class MainController1 : MonoBehaviour
         CalenderUI.text = Calender;
         GameObject.FindGameObjectWithTag("Type2").GetComponent<AudioSource>().volume = 1;
         GameObject.FindGameObjectWithTag("Type2").GetComponent<AudioSource>().Play();
-        yield return new WaitForSeconds(14);
+        yield return new WaitForSeconds(17);
         CalenderUI.gameObject.SetActive(false);
         myNews.SetActive(true);
         newsAU.Play();
         yield return new WaitForSeconds(8);
         myNews.SetActive(false);
-        Flag = false;
         CalenderObject.SetActive(false);
         myblack.DOColor(Color.clear, 3);
-        yield return null;
+        if (gameObject.name == "MainController")
+        {
+            Guide.GetComponent<SpriteRenderer>().DOColor(Color.white, 3);
+            yield return new WaitForSeconds(3);
+            while (!Input.anyKeyDown)
+                yield return null;
+            Guide.SetActive(false);
+            
+        }
+        Flag = false;
     }
 
     IEnumerator Next()
@@ -153,7 +177,7 @@ public class MainController1 : MonoBehaviour
         //Debug.Log(now);
         if (now > 0 && (Happen[now - 1] == 0 || Happen[now - 1] == -100))
         {
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(2.25f);
             SB.Close();
             People[now - 1].GetComponent<SpriteRenderer>().DOColor(Color.clear, 1.5f);
             footstepsAU.Play();
