@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class MainController1 : MonoBehaviour
 {
     public int now;
-    private bool Flag;
+    //private bool Flag;
     public int have;
     public int[] Happen;
     //负数 减少补给，正数 增加补给，100 停止补给，0 有人进来，-100特殊对话
@@ -123,7 +123,7 @@ public class MainController1 : MonoBehaviour
         footstepsAU = GameObject.FindGameObjectWithTag("footstep").GetComponent<AudioSource>();
         supplyAU = GameObject.FindGameObjectWithTag("supply").GetComponent<AudioSource>();
         ringAU = GameObject.FindGameObjectWithTag("ring").GetComponent<AudioSource>();
-        Flag = true;
+        //Flag = true;
         DOTween.Init();
         AliveAll = 0;
         AlivePart = 0;
@@ -135,7 +135,7 @@ public class MainController1 : MonoBehaviour
     IEnumerator First()
     {
         gameObject.GetComponent<AudioSource>().Play();
-        Flag = true;
+        //Flag = true;
         if (gameObject.name != "MainController")
         {
             yield return new WaitForSeconds(5);
@@ -166,26 +166,26 @@ public class MainController1 : MonoBehaviour
             while (!Input.anyKeyDown)
                 yield return null;
             Guide.SetActive(false);
-            
         }
-        Flag = false;
+        StartCoroutine(Next());
+        //Flag = false;
     }
 
-    IEnumerator Next()
+    public IEnumerator Next()
     {
-        Flag = true;
-        //Debug.Log(now);
-        if (now > 0 && (Happen[now - 1] == 0 || Happen[now - 1] == -100))
-        {
-            yield return new WaitForSeconds(2.25f);
-            SB.Close();
-            People[now - 1].GetComponent<SpriteRenderer>().DOColor(Color.clear, 1.5f);
-            footstepsAU.Play();
-            //离开的动画
-            yield return new WaitForSeconds(2);
-            People[now - 1].SetActive(false);
-            //气泡消失
-        }
+        //Flag = true;
+        Debug.Log(now);
+        //if (now > 0 && (Happen[now - 1] == 0 || Happen[now - 1] == -100))
+        //{
+        //    yield return new WaitForSeconds(2.25f);
+        //    SB.Close();
+        //    People[now - 1].GetComponent<SpriteRenderer>().DOColor(Color.clear, 1.5f);
+        //    footstepsAU.Play();
+        //    //离开的动画
+        //    yield return new WaitForSeconds(2);
+        //    People[now - 1].SetActive(false);
+        //    //气泡消失
+        //}
         //Debug.Log(People.Length);
         if (now == People.Length)
         {
@@ -232,23 +232,24 @@ public class MainController1 : MonoBehaviour
         }
         footstepsAU.Play();
         //进入的动画
-        //Debug.Log("What?");
+        
         People[now].SetActive(true);
-        if (Happen[now] == 0) StartCoroutine(People[now].GetComponent<Interactive>().First());
-        else StartCoroutine(People[now].GetComponent<SpecialInteractive>().First());
+        People[now].GetComponent<BasicInteractive>().Start();
+        //if (Happen[now] == 0) StartCoroutine(People[now].GetComponent<Interactive>().First());
+        //else StartCoroutine(People[now].GetComponent<SpecialInteractive>().First());
         //People[now].GetComponent<SpriteRenderer>().DOFade(255, 3);
-        People[now].GetComponent<SpriteRenderer>().DOColor(Color.white, 2);
-        yield return new WaitForSeconds(2);
+        //People[now].GetComponent<SpriteRenderer>().DOColor(Color.white, 2);
+        //yield return new WaitForSeconds(2);
         now++;
-        Flag = false;
+        //Flag = false;
     }
     void Update()
     {
         Text1.text = have.ToString();
         Text2.text = (Happen.Length-now).ToString();
         //Debug.Log(Flag);
-        if (Flag) return;
-        if (now != 0)
+        //if (Flag) return;
+        /*if (now != 0)
         {
             if (Happen[now - 1] != 0 && done[now - 1] && Happen[now - 1] != -100) StartCoroutine(Next());
             else if (Happen[now - 1] == 0 && People[now - 1].GetComponent<Interactive>().done == true)
@@ -271,6 +272,6 @@ public class MainController1 : MonoBehaviour
                 StartCoroutine(Next());
             }
         }
-        else StartCoroutine(Next());
+        else StartCoroutine(Next());*/
     }
 }

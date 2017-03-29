@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using DG.Tweening;
+using System;
 
-public class SpecialInteractive : MonoBehaviour
+public class SpecialInteractive : BasicInteractive
 {
     public bool done;
     public int need;
@@ -18,34 +19,25 @@ public class SpecialInteractive : MonoBehaviour
     public SpecialDialogue myDia;
     public int State;
     private LastDay LD;
-    private Subtitles SB;
-    private GameObject Left, Right;
-    private AudioSource newsAU;
-    private AudioSource footstepsAU;
-    private AudioSource supplyAU;
-    private AudioSource ringAU;
-    public Sprite hold;
-    public Sprite unhold;
     public Sprite[] Emo;
     private SpriteRenderer myTag;
     public Sprite Tag;
-    private bool ani = false;
     public int Query(int n)
     {
         for (int i = 0; i < myDia.ID.Length; i++)
             if (myDia.ID[i] == n) return i;
         return 1000;
-    }
-    public IEnumerator First()
+    }                        
+    public override IEnumerator Begin()
     {
-        ani = true;
+        //ani = true;
         myTag = GameObject.FindGameObjectWithTag("Tag").GetComponent<SpriteRenderer>();
         myDia = GameObject.FindGameObjectWithTag("NSD").GetComponent<SpecialDialogue>();
         LD = GameObject.FindGameObjectWithTag("LD").GetComponent<LastDay>();
-        newsAU = GameObject.FindGameObjectWithTag("news").GetComponent<AudioSource>();
-        footstepsAU = GameObject.FindGameObjectWithTag("footstep").GetComponent<AudioSource>();
-        supplyAU = GameObject.FindGameObjectWithTag("supply").GetComponent<AudioSource>();
-        ringAU = GameObject.FindGameObjectWithTag("ring").GetComponent<AudioSource>();
+        //newsAU = GameObject.FindGameObjectWithTag("news").GetComponent<AudioSource>();
+        //footstepsAU = GameObject.FindGameObjectWithTag("footstep").GetComponent<AudioSource>();
+        //supplyAU = GameObject.FindGameObjectWithTag("supply").GetComponent<AudioSource>();
+        //ringAU = GameObject.FindGameObjectWithTag("ring").GetComponent<AudioSource>();
         need = 1;
         SB = GameObject.FindGameObjectWithTag("SB").GetComponent<Subtitles>();
         done = false;
@@ -53,6 +45,8 @@ public class SpecialInteractive : MonoBehaviour
         if (State == 1) if (LD.Query(40004)) State = 10007; else State = 10012;
         if (State == 2) if (LD.Query(20003)) State = 20006; else State = 20012;
         if (State == 3) if (LD.Query(50002)) State = 50004; else State = 50007;
+        GetComponent<SpriteRenderer>().DOFade(255, 3);
+        GetComponent<SpriteRenderer>().DOColor(Color.white, 2);
         Left = GameObject.FindGameObjectWithTag("left");
         Right = GameObject.FindGameObjectWithTag("right");
         myTag.sprite = Tag;
@@ -61,32 +55,52 @@ public class SpecialInteractive : MonoBehaviour
         SB.Show(myDia.Ask[Query(State)]);
         yield return new WaitForSeconds(2);
         myTag.DOColor(Color.clear, 1);
-        ani = false;
         GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
+        m_State = Ani_State.Wait;
         //显示气泡，Ask0[Display]
     }
-
+    public override void LeftFunction()
+    {
+        supplyAU.Play();
+        GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().have--;
+        if (GameObject.FindGameObjectWithTag("GameController").GetComponent<MainController1>().have <= 0) leave();
+        //胳膊继续移动，给他一包粮食.
+        //改变粮食图片
+        now++;
+        State = myDia.Yes[Query(State)];
+        SB.Show(myDia.Ask[Query(State)]);
+        GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
+        if (myDia.Yes[Query(State)] == 0) leave();
+    }
+    public override void RightFunction()
+    {
+        ringAU.Play();
+        State = myDia.No[Query(State)];
+        SB.Show(myDia.Ask[Query(State)]);
+        GetComponent<SpriteRenderer>().sprite = Emo[myDia.Emo[Query(State)]];
+        Mytime = 100000;
+        if (myDia.No[Query(State)] == 0) leave();
+    }
     void leave()
     {
         LD.Append(State);
-        done = true;
+        StartCoroutine(End());
     }
-    IEnumerator change()
-    {
-        yield return new WaitForSeconds(1.25f);
-        Left.GetComponent<SpriteRenderer>().sprite = unhold;
-        Left.transform.DORotate(new Vector3(0, 0, 0), 1f);
-        Left.transform.DOMoveX(-730, 1f);
-        yield return new WaitForSeconds(1);
-        ani = false;
-    }
-    IEnumerator changeRight()
-    {
-        yield return new WaitForSeconds(0.8f);
-        ani = false;
-    }
+    //IEnumerator change()
+    //{
+    //    yield return new WaitForSeconds(1.25f);
+    //    Left.GetComponent<SpriteRenderer>().sprite = unhold;
+    //    Left.transform.DORotate(new Vector3(0, 0, 0), 1f);
+    //    Left.transform.DOMoveX(-730, 1f);
+    //    yield return new WaitForSeconds(1);
+    //}
+    //IEnumerator changeRight()
+    //{
+    //    yield return new WaitForSeconds(0.8f);
+    //    ani = false;
+    //}
 
-    void Update()
+    /*void Update()
     {
         if (ani || SB.doing) return;
         if (Input.GetKeyDown(KeyCode.A))
@@ -164,5 +178,5 @@ public class SpecialInteractive : MonoBehaviour
             }
         }
 
-    }
+    }*/
 }
